@@ -10,17 +10,17 @@ public class Factory implements go.Factory {
 
     /** Création ou accès à un canal existant. */
     public <T> go.Channel<T> newChannel(String name) {
-        return new go.shm.Channel(name);
+        return new go.shm.Channel<>(name);
     }
     
     /** Spécifie quels sont les canaux écoutés et la direction pour chacun. */
     public go.Selector newSelector(Map<go.Channel, Direction> channels) {
-        // TODO
+        return null; // TODO
     }
 
     /** Spécifie quels sont les canaux écoutés et la même direction pour tous. */
     public go.Selector newSelector(Set<go.Channel> channels, Direction direction) {
-        // TODO
+        return null; // TODO
     }
 
 }
