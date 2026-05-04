@@ -1,26 +1,30 @@
 package go.shm;
 
+import java.util.ArrayList;
+
 import go.Direction;
 import go.Observer;
 
 public class Channel<T> implements go.Channel<T> {
 
+    private List<T> data;
+    private String name;
+
     public Channel(String name) {
-        // TODO
+        this.data = new ArrayList<>();
+        this.name = name;
     }
     
     public void out(T v) {
-        // TODO
+        this.data.add(v);
     }
     
     public T in() {
-        // TODO
-        return null;
+        return this.data.remove(this.data.size()-1);
     }
 
     public String getName() {
-        // TODO
-        return null;
+        return this.name;
     }
 
     public void observe(Direction dir, Observer observer) {
