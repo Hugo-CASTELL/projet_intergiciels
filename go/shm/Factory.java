@@ -15,12 +15,17 @@ public class Factory implements go.Factory {
     
     /** Spécifie quels sont les canaux écoutés et la direction pour chacun. */
     public go.Selector newSelector(Map<go.Channel, Direction> channels) {
-        return null; // TODO
+        return new Selector(channels); 
     }
 
     /** Spécifie quels sont les canaux écoutés et la même direction pour tous. */
     public go.Selector newSelector(Set<go.Channel> channels, Direction direction) {
-        return null; // TODO
+        Map<go.Channel, Direction> channelsMap = new Map<go.Channel, Direction>();
+
+        for (Channel channel : channels){
+            channelsMap.add(channel, direction);
+        }
+        return this.newSelector(channelsMap);
     }
 
 }
