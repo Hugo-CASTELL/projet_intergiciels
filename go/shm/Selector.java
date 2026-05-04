@@ -9,29 +9,35 @@ import java.util.Set;
 public class Selector implements go.Selector {
 
     private final Map<Channel, Direction> chanelsMap;
+    private Channel chosenOne;
 
     public Selector(Map<Channel, Direction> channels) {
         this.chanelsMap = channels;
+        this.chosenOne = null;
     }
 
     public Channel select() {
-        // TODO
-
-        // je peut faire un in si un channel est bloqué en out
-
-        // je peut faire un out si un channel est bloqué en in
-
-
         for (var entry : this.chanelsMap.entrySet()){
             Channel channel = entry.getKey();
             Direction direction = entry.getValue();
             
-            Observer observer = new Observer();
+            Observer observer = new Observer() {
+                @Override
+                public void update() {
+                    chosenOne = channel;
+                }
+            };
             channel.observe(Direction.inverse(direction), observer);
         }
 
+        while (chosenOne == null) {
+            //rien
+        }
 
-        return null;
+        Channel alexis = chosenOne;
+        chosenOne = null;
+
+        return alexis;
     }
 
 }
