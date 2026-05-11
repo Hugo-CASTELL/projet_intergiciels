@@ -5,11 +5,10 @@ import go.Channel;
 import java.util.Map;
 import java.util.Set;
 
-public class Selector implements go.Selector {
+public class Selector extends go.shm.Selector {
 
-    public Channel select() {
-        // TODO
-        return null;
+    public Selector(Map<Channel, Direction> channels) {
+        super(channels);
     }
 
 }

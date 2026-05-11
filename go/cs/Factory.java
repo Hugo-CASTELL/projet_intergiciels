@@ -1,6 +1,10 @@
 package go.cs;
 
 import go.Direction;
+import go.shm.Selector;
+
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.Set;
 import java.util.Map;
 import java.util.function.Function;
@@ -19,8 +23,7 @@ public class Factory implements go.Factory {
     
     /** Spécifie quels sont les canaux écoutés et la direction pour chacun. */
     public go.Selector newSelector(Map<go.Channel, Direction> channels) {
-        // TODO
-        return null;
+        return new Selector(channels);
     }
 
     /** Spécifie quels sont les canaux écoutés et la même direction pour tous. */

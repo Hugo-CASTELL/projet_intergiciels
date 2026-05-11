@@ -6,6 +6,8 @@ package go.cs;
  */
 public class ServerImpl {
 
+    public static int PORT = 1099;
+
     public static void main(String args[]) {
         // TODO
     }
