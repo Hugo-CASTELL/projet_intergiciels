@@ -89,6 +89,7 @@ public class Channel<T> implements go.Channel<T> {
     public void observe(Direction dir, Observer observer) {
         if(dir == Direction.In){
             if (this.outCounter.get() > 0){
+                System.out.println("Channel " + this.name + " observe instant update (for in)");
                 observer.update();
             }
             else{
@@ -97,6 +98,7 @@ public class Channel<T> implements go.Channel<T> {
             
         } else if(dir == Direction.Out){
             if (this.inCounter.get() > 0){
+                System.out.println("Channel " + this.name + " observe instant update (for out)");
                 observer.update();
             }
             else{
