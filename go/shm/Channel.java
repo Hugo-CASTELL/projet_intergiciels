@@ -31,10 +31,13 @@ public class Channel<T> implements go.Channel<T> {
         this.outCounter = new AtomicInteger(0);
 
         this.name = name;
+        System.out.println("Channel " + this.name + " created");
     }
     
     public void out(T v) {
         try {
+            System.out.println("Channel " + this.name + " start out(" + v + ")");
+
             // indiquer la presence d'un redacteur
             this.outCounter.incrementAndGet();
             
@@ -47,7 +50,7 @@ public class Channel<T> implements go.Channel<T> {
             // ajouter la donnee dans la file
             this.queue.put(v);
             this.outCounter.decrementAndGet();
-
+            System.out.println("Channel " + this.name + " finish out(" + v + ")");
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -55,6 +58,8 @@ public class Channel<T> implements go.Channel<T> {
     
     public T in() {
         try {
+            System.out.println("Channel " + this.name + " start in()");
+            
             // indiquer la presence d'un lecteur
             this.inCounter.incrementAndGet();
 
@@ -69,6 +74,8 @@ public class Channel<T> implements go.Channel<T> {
 
             // envoyer le resultat
             this.inCounter.decrementAndGet();
+
+            System.out.println("Channel " + this.name + " finish in()");
             return result;
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -96,6 +103,7 @@ public class Channel<T> implements go.Channel<T> {
                 this.outObservers.add(observer);
             }
         }
+        System.out.println("Channel " + this.name + " finish observe()");
     }
 
 	private void notify(List<Observer> observers){
@@ -103,6 +111,7 @@ public class Channel<T> implements go.Channel<T> {
 			observers.getFirst().update();
 			observers.removeFirst();
 		}
+        System.out.println("Channel " + this.name + " finish notify()");
 	}
         
 }
