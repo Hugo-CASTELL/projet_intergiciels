@@ -12,13 +12,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Channel<T> implements go.Channel<T> {
 
-    private String name;
+    private final String name;
     private final BlockingQueue<T> queue;
     private final BlockingQueue<Integer> queueIn;
     private final List<Observer> inObservers;
     private final List<Observer> outObservers;
-    private AtomicInteger inCounter;
-    private AtomicInteger outCounter;
+    private final AtomicInteger inCounter;
+    private final AtomicInteger outCounter;
 
     private static final int QUEUE_SIZE = 1000;
 
@@ -28,7 +28,7 @@ public class Channel<T> implements go.Channel<T> {
         this.inObservers = new ArrayList<>(QUEUE_SIZE);
         this.outObservers = new ArrayList<>(QUEUE_SIZE);
         this.inCounter = new AtomicInteger(0);
-        this.inCounter = new AtomicInteger(0);
+        this.outCounter = new AtomicInteger(0);
 
         this.name = name;
     }
@@ -38,16 +38,13 @@ public class Channel<T> implements go.Channel<T> {
             // indiquer la presence d'un redacteur
             this.outCounter.incrementAndGet();
             
-            // notifier les observers
-            while (this.outObservers.size() > 0){
-                this.outObservers.get(0).update();
-                this.outObservers.remove(0);
-            }
+            // notifier les observers inverse car l'action inverse est possible
+			this.notify(this.inObservers);
 
-            // si aucun lecteur, bloquer jusqu'au prochain in
+            // Attente d'un lecteur pour echange 1-1
             this.queueIn.take();
 
-            // ajouter la donner dans la file
+            // ajouter la donnee dans la file
             this.queue.put(v);
             this.outCounter.decrementAndGet();
 
@@ -61,11 +58,8 @@ public class Channel<T> implements go.Channel<T> {
             // indiquer la presence d'un lecteur
             this.inCounter.incrementAndGet();
 
-            // notifier les observers
-            while (this.inObservers.size() > 0){
-                this.inObservers.get(0).update();
-                this.inObservers.remove(0);
-            }
+            // notifier les observers inverse car l'action inverse est possible
+            this.notify(this.outObservers);
 
             // indiquer la presence d'un lecteur a la fonction out
             this.queueIn.put(1);
@@ -74,7 +68,7 @@ public class Channel<T> implements go.Channel<T> {
             T result = this.queue.take();
 
             // envoyer le resultat
-            this.outCounter.decrementAndGet();
+            this.inCounter.decrementAndGet();
             return result;
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -87,7 +81,7 @@ public class Channel<T> implements go.Channel<T> {
 
     public void observe(Direction dir, Observer observer) {
         if(dir == Direction.In){
-            if (this.inCounter.get() > 0){
+            if (this.outCounter.get() > 0){
                 observer.update();
             }
             else{
@@ -103,5 +97,12 @@ public class Channel<T> implements go.Channel<T> {
             }
         }
     }
+
+	private void notify(List<Observer> observers){
+		while (!observers.isEmpty()){
+			observers.getFirst().update();
+			observers.removeFirst();
+		}
+	}
         
 }

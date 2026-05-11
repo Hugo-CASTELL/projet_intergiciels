@@ -9,7 +9,7 @@ import java.util.Set;
 public class Selector implements go.Selector {
 
     private final Map<Channel, Direction> chanelsMap;
-    private Channel chosenOne;
+    private volatile Channel chosenOne;
 
     public Selector(Map<Channel, Direction> channels) {
         this.chanelsMap = channels;
@@ -27,7 +27,7 @@ public class Selector implements go.Selector {
                     chosenOne = channel;
                 }
             };
-            channel.observe(Direction.inverse(direction), observer);
+            channel.observe(direction, observer);
         }
 
         while (chosenOne == null) {
