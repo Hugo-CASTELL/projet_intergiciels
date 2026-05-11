@@ -12,8 +12,9 @@ public class ServerImpl {
 
     public static int PORT = 1099;
 
-    public static void main(String args[]) throws RemoteException {
-        Registry dns = LocateRegistry.getRegistry(ServerImpl.PORT);
+    public static void main(String args[]) throws RemoteException, InterruptedException {
+        Registry dns = LocateRegistry.createRegistry(ServerImpl.PORT);
+        Thread.currentThread().join();
     }
 
 }

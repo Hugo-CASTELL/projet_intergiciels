@@ -3,6 +3,10 @@ package go.cs;
 import go.Direction;
 import go.shm.Selector;
 
+import java.rmi.AlreadyBoundException;
+import java.rmi.NotBoundException;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Set;
@@ -17,18 +21,24 @@ public class Factory implements go.Factory {
      * les appels suivants avec le même nom donneront accès au même canal.
      */
     public <T> go.Channel<T> newChannel(String name) {
-        Registry dns = LocateRegistry.getRegistry(ServerImpl.PORT);
-        
-        // récupération de l'ancien channel
-        go.Channel channel = (go.Channel) dns.lookup(name);
-        if (channel != null){
-            return channel;
-        }
+        Registry dns = null;
+        try {
+            dns = LocateRegistry.getRegistry(ServerImpl.PORT);
 
-        // creation d'un nouveau channel
-        channel = new Channel(name);
-        dns.bind(name, channel);
-        return channel;
+            // récupération de l'ancien channel
+            try {
+                return (go.Channel) dns.lookup(name);
+            } catch (NotBoundException e) {
+                go.cs.Channel channel = new Channel(name);
+                dns.bind(name, channel);
+                return channel;
+            }
+
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        } catch (AlreadyBoundException e) {
+            throw new RuntimeException(e);
+        }
     }
     
     /** Spécifie quels sont les canaux écoutés et la direction pour chacun. */

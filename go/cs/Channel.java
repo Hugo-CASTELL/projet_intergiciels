@@ -4,15 +4,16 @@ import go.Direction;
 import go.Observer;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 
 public class Channel<T> extends UnicastRemoteObject implements go.Channel<T> {
 
-    private shm.Channel<T> channel;
+    private go.shm.Channel<T> channel;
 
-    public Channel(String name) {
-        this.channel = new Channel(name);
+    public Channel(String name) throws RemoteException {
+        this.channel = new go.shm.Channel(name);
     }
 
     public void out(T v) {
