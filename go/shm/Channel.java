@@ -108,7 +108,10 @@ public class Channel<T> implements go.Channel<T> {
 
 	private void notify(List<Observer> observers){
 		while (!observers.isEmpty()){
-			observers.getFirst().update();
+            Observer observer = observers.getFirst();
+            if (observer != null){
+                observer.update();
+            }
 			observers.removeFirst();
 		}
         System.out.println("Channel " + this.name + " finish notify()");
