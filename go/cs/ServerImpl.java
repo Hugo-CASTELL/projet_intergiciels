@@ -1,5 +1,6 @@
 package go.cs;
 
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
@@ -11,7 +12,7 @@ public class ServerImpl {
 
     public static int PORT = 1099;
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws RemoteException {
         Registry dns = LocateRegistry.getRegistry(ServerImpl.PORT);
     }
 
