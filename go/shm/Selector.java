@@ -31,7 +31,9 @@ public class Selector implements go.Selector {
 
                 Observer observer = () -> {
                     synchronized (Selector.this){
+                        System.out.println("Selector.select() -> observer running update");
                         if(Selector.this.chosenOne == null){
+                            System.out.println("Selector.select() -> observer changing chosenOne for " + channel.getName());
                             Selector.this.chosenOne = channel;
                             Selector.this.notify();
                         }
@@ -42,7 +44,11 @@ public class Selector implements go.Selector {
             }
 
             try {
-                this.wait();
+                if(chosenOne == null){
+                    System.out.println("Selector.select() -> wait");
+                    this.wait();
+                    System.out.println("Selector.select() -> finished wait");
+                }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
