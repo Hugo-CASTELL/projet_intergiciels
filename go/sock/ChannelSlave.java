@@ -1,3 +1,5 @@
-public class ChannelMaster{
+package go.sock;
+
+public class ChannelSlave{
     
 }

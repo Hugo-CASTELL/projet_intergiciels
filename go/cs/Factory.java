@@ -20,24 +20,7 @@ public class Factory implements go.Factory {
      * les appels suivants avec le même nom donneront accès au même canal.
      */
     public <T> go.Channel<T> newChannel(String name) {
-        Registry dns = null;
-        try {
-            dns = LocateRegistry.getRegistry(ServerImpl.PORT);
-
-            // récupération de l'ancien channel
-            try {
-                return (go.Channel) dns.lookup(name);
-            } catch (NotBoundException e) {
-                go.cs.Channel channel = new Channel(name);
-                dns.bind(name, channel);
-                return channel;
-            }
-
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        } catch (AlreadyBoundException e) {
-            throw new RuntimeException(e);
-        }
+        return new go.cs.Channel<>(name);
     }
     
     /** Spécifie quels sont les canaux écoutés et la direction pour chacun. */
