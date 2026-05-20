@@ -17,9 +17,8 @@ public class Channel<T> implements go.Channel<T> {
     private final go.cs.ChannelRemote<T> channel;
 
     public Channel(String name) {
-        Registry dns = null;
         try {
-            dns = LocateRegistry.getRegistry(ServerImpl.PORT);
+            Registry dns = LocateRegistry.getRegistry(ServerImpl.PORT);
 
             // récupération de l'ancien channel
             ChannelRemote channelBinding = null;
