@@ -1,11 +1,14 @@
 package go.sock;
 
+import java.net.Socket;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 public class ChannelSlave{
+
+    private Socket socket = null;
 
     public ChannelSlave() {
         // Cherche à s'enregistrer dans le DNS
@@ -18,8 +21,27 @@ public class ChannelSlave{
         }
 
         // Se connecter au serveur
+        this.socket = new Socket(address.getIP(), address.getPort());
+        
+        
     }
 
     // TODO faire des méthodes de in et out
+
+    public void out(T v) {
+        try {
+            this.socket.out(v);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    public T in() {
+        try {
+            return this.socket.in();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }
