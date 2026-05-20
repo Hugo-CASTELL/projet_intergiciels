@@ -1,7 +1,9 @@
 package go;
 
+import java.rmi.Remote;
+
 /** Un canal de communication synchrone, qui permet d'envoyer et recevoir des messages de type T. */
-public interface Channel<T> extends java.io.Serializable {
+public interface Channel<T> extends java.io.Serializable, Remote {
 
     /** Envoi synchrone d'un message.
      * Bloque tant que le message ne peut pas être envoyé. */
