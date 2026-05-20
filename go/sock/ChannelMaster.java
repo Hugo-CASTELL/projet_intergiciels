@@ -1,18 +1,17 @@
 package go.sock;
 
-import go.cs.ChannelRemote;
-import go.cs.ChannelRemoteImpl;
-import go.cs.ServerImpl;
+import go.shm.Channel;
 
-import java.net.InetAddress;
+import java.io.*;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-public class ChannelMaster{
+public class ChannelMaster {
 
     public static final String HOSTNAME = "baobab.n7.fr";
 
@@ -33,8 +32,34 @@ public class ChannelMaster{
             throw new RuntimeException(e);
         }
 
-        // Lancer le serveur
+        // Préparation
         ServerSocket serverSocket = new ServerSocket(PORT);
-        // TODO while avec accept()
+        go.shm.Channel channel = new Channel("shared");
+
+        // Lancer le serveur
+        while(true){
+            Socket sock = serverSocket.accept();
+            BufferedReader received = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+            PrintWriter answer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(sock.getOutputStream())), true);
+
+            Boolean wasOutBefore = false;
+            while(true) {
+                String message = received.readLine();
+                if(wasOutBefore){
+                    channel.out(message);
+                    break;
+                } else {
+                    if(message.equals("IN")) {
+                        channel.in();
+                        // TODO Alexis, il faut pas écrire un truc en réponse ?
+                    } else if (message.equals("OUT")) {
+                        wasOutBefore = true;
+                        // TODO Alexis, il faut pas écrire un truc en réponse ?
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
