@@ -22,7 +22,6 @@ public class Selector implements go.Selector {
     public Channel select() {
         synchronized (this){
             chosenOne = null;
-            List<Observer> observerList = new ArrayList<>();
 
             System.out.println("Selector.select()");
             for (var entry : this.chanelsMap.entrySet()){
@@ -39,8 +38,13 @@ public class Selector implements go.Selector {
                         }
                     }
                 };
+
                 channel.observe(direction, observer);
-                observerList.add(observer);
+
+                // Si instant-update
+                if (chosenOne != null){
+                    break;
+                }
             }
 
             try {
@@ -53,13 +57,7 @@ public class Selector implements go.Selector {
                 throw new RuntimeException(e);
             }
 
-            while(!observerList.isEmpty()){
-                observerList.set(0, null);
-                observerList.removeFirst();
-            }
-
             System.out.println("Selector.select() -> choix du channel " + chosenOne.getName());
-
             return chosenOne;
         }
     }

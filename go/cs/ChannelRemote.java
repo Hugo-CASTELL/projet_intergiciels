@@ -18,6 +18,6 @@ public interface ChannelRemote<T> extends Remote {
 
     void observe(Direction dir, Observer observer) throws RemoteException;
 
-    void notify(List<Observer> observers) throws RemoteException;
+    void notify(Direction dir) throws RemoteException;
 
 }

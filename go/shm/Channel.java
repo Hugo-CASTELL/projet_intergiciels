@@ -45,7 +45,7 @@ public class Channel<T> implements go.Channel<T> {
             this.outOperationCurrentlyRunningCounter.incrementAndGet();
             
             // notifier les observers inverse car l'action inverse est possible
-			this.notify(this.inObservers);
+			this.notify(Direction.In);
 
             // Attente d'un lecteur pour echange 1-1
             this.queueIn.take();
@@ -69,7 +69,7 @@ public class Channel<T> implements go.Channel<T> {
             this.inOperationCurrentlyRunningCounter.incrementAndGet();
 
             // notifier les observers inverse car l'action inverse est possible
-            this.notify(this.outObservers);
+            this.notify(Direction.Out);
 
             // indiquer la presence d'un lecteur a la fonction out
             this.queueIn.put(1); // 1 au hasard, on n'utilise pas cette valeur
@@ -113,15 +113,14 @@ public class Channel<T> implements go.Channel<T> {
         System.out.println("Channel " + this.name + " finish observe()");
     }
 
-	public void notify(List<Observer> observers){
-		while (!observers.isEmpty()){
-            Observer observer = observers.getFirst();
-            if (observer != null){
-                observer.update();
-            }
-			observers.removeFirst();
-		}
+	public void notify(Direction dir){
+        System.out.println("Channel " + this.name + " start notify()");
+        List<Observer> observers = (dir == Direction.In ? this.inObservers : this.outObservers);
+        if (!observers.isEmpty()){
+            //observers.getFirst().update();
+            observers.forEach(Observer::update);
+            observers.clear();
+        }
         System.out.println("Channel " + this.name + " finish notify()");
 	}
-        
 }

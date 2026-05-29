@@ -31,8 +31,8 @@ public class ChannelRemoteImpl<T> extends UnicastRemoteObject implements Channel
         this.channel.observe(dir, observer);
     }
 
-    public void notify(List<Observer> observers) throws RemoteException {
-        this.channel.notify(observers);
+    public void notify(Direction dir) throws RemoteException {
+        this.channel.notify(dir);
     }
 
 }

@@ -68,7 +68,7 @@ public class Channel<T> implements go.Channel<T> {
         }
     }
 
-    public void notify(List<Observer> observers) throws RemoteException {
-        this.channel.notify(observers);
+    public void notify(Direction dir) throws RemoteException {
+        this.channel.notify(dir);
     }
 }
