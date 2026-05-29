@@ -11,13 +11,14 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-public class ChannelMaster {
+public class ChannelMaster extends Thread{
 
     public static final String HOSTNAME = "baobab.n7.fr";
 
     private static final int PORT = 20001;
 
-    public static void main(String[] args) throws Exception {
+    @Override
+    public void run() {
         // Cherche à s'enregistrer dans le DNS
         try {
             Registry dns = LocateRegistry.getRegistry(Naming.PORT);
@@ -66,5 +67,9 @@ public class ChannelMaster {
             received.close();
             sock.close();
         }
+    }
+
+    public String getName() {
+        return this.name;
     }
 }

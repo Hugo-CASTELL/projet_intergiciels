@@ -11,20 +11,20 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 public class ChannelSlave<T> implements Channel<T> {
-
+    private String name;
     private Socket socket = null;
     private BufferedReader reader = null;
     private PrintWriter writer = null;
     private Host address = null;
 
-    public ChannelSlave() {
+    public ChannelSlave(String name) {
+        this.name=name;
         // Cherche à s'enregistrer dans le DNS
         try {
             Registry dns = LocateRegistry.getRegistry(Naming.PORT);
@@ -78,7 +78,7 @@ public class ChannelSlave<T> implements Channel<T> {
 
     @Override
     public String getName() {
-        return "";
+        return this.name;
     }
 
     @Override

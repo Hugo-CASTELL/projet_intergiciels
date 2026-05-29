@@ -1,5 +1,9 @@
 package go.sock;
 
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,9 +17,26 @@ public class Factory implements go.Factory {
      * crée un ChannelMaster si le canal n’existe pas ; s’il existe, on crée un ChannelSlave.
      * Note : pouvoir envoyer un canal dans un canal demande d’adapter la sérialisation.
     */
+
+
     public <T> go.Channel<T> newChannel(String name){
-        // TODO
-        return null;
+        try{
+            Registry dns = LocateRegistry.getRegistry(Naming.PORT);
+            
+            // creation du master si necessaire
+            try {
+                Host address = (Host) dns.lookup(ChannelMaster.HOSTNAME);
+            } catch (NotBoundException e) {
+                // Donne son IP et son Port en s'enregistrant
+                Thread threadMaster = new ChannelMaster();
+                threadMaster.start();
+            }
+        }
+        catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new ChannelSlave<>("slave");
     }
     
     /** Hors projet */
