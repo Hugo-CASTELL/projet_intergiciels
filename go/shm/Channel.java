@@ -13,10 +13,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Channel<T> implements go.Channel<T> {
 
     private final String name;
+
     private final BlockingQueue<T> queue;
     private final BlockingQueue<Integer> queueIn;
+
     private final List<Observer> inObservers;
     private final List<Observer> outObservers;
+
     private final AtomicInteger inCounter;
     private final AtomicInteger outCounter;
 
@@ -25,8 +28,8 @@ public class Channel<T> implements go.Channel<T> {
     public Channel(String name) {
         this.queue = new ArrayBlockingQueue<>(QUEUE_SIZE);
         this.queueIn = new ArrayBlockingQueue<>(QUEUE_SIZE);
-        this.inObservers = new ArrayList<>(QUEUE_SIZE);
-        this.outObservers = new ArrayList<>(QUEUE_SIZE);
+        this.inObservers = new ArrayList<>();
+        this.outObservers = new ArrayList<>();
         this.inCounter = new AtomicInteger(0);
         this.outCounter = new AtomicInteger(0);
 

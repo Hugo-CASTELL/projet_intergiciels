@@ -42,24 +42,29 @@ public class ChannelMaster {
             BufferedReader received = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             PrintWriter answer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(sock.getOutputStream())), true);
 
-            Boolean wasOutBefore = false;
-            while(true) {
+            boolean wasOutBefore = false;
+            boolean endSocket = false;
+            while(endSocket) {
                 String message = received.readLine();
                 if(wasOutBefore){
                     channel.out(message);
-                    break;
+                    endSocket = true;
                 } else {
                     if(message.equals("IN")) {
-                        channel.in();
-                        // TODO Alexis, il faut pas écrire un truc en réponse ?
+                        answer.println(channel.in());
+                        endSocket = true;
                     } else if (message.equals("OUT")) {
                         wasOutBefore = true;
-                        // TODO Alexis, il faut pas écrire un truc en réponse ?
                     } else {
                         break;
                     }
                 }
             }
+
+            answer.println("END_SOCKET");
+            answer.close();
+            received.close();
+            sock.close();
         }
     }
 }
