@@ -1,5 +1,9 @@
 package go.sock;
 
+import go.Channel;
+import go.Direction;
+import go.Observer;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -13,7 +17,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-public class ChannelSlave{
+public class ChannelSlave<T> implements Channel<T> {
 
     private Socket socket = null;
     private BufferedReader reader = null;
@@ -36,9 +40,6 @@ public class ChannelSlave{
             this.reader = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
             this.writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream())),true);
         }
-        catch (UnknownHostException e){
-            System.out.println(e);
-        }
         catch (IOException e){
             System.out.println(e);
         }
@@ -51,11 +52,10 @@ public class ChannelSlave{
         try {this.socket.close();}  catch(IOException e){System.out.println(e);}
     }
 
-    // TODO faire des méthodes de in et out
-
     public void out(T v) {
         this.ouvrirConnection();
-        this.writer.println("IN");
+
+        this.writer.println("OUT");
         this.writer.println(v);
 
         fermerConnection();
@@ -63,11 +63,27 @@ public class ChannelSlave{
     
     public T in() {
         this.ouvrirConnection();
-        this.writer.println("OUT");
-        String response = this.reader.readLine();
+
+        this.writer.println("IN");
+        String response = null;
+        try {
+            response = this.reader.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         fermerConnection();
         return (T) response;
+    }
+
+    @Override
+    public String getName() {
+        return "";
+    }
+
+    @Override
+    public void observe(Direction direction, Observer observer) {
+
     }
 
 }
