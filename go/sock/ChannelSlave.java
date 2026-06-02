@@ -73,10 +73,6 @@ public class ChannelSlave<T> implements Channel<T> {
             return (T) Integer.valueOf(trim);
         } catch (NumberFormatException e) { }
 
-        if (trim.equalsIgnoreCase("true") || trim.equalsIgnoreCase("false")) {
-            return (T) Boolean.valueOf(trim);
-        }
-
         System.out.println("DEBUG: Server sent as  response: '" + response + "'");
 
         return (T) trim;
