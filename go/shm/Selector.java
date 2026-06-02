@@ -4,10 +4,7 @@ import go.Direction;
 import go.Observer;
 import go.Channel;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class Selector implements go.Selector {
 
@@ -21,6 +18,10 @@ public class Selector implements go.Selector {
 
     public Channel select() {
         synchronized (this){
+            if(chanelsMap.isEmpty()){
+                throw new RuntimeException("Selector: no channels given");
+            }
+
             chosenOne = null;
 
             System.out.println("Selector.select()");
@@ -29,7 +30,7 @@ public class Selector implements go.Selector {
                 Direction direction = entry.getValue();
 
                 Observer observer = () -> {
-                    synchronized (Selector.this){
+                    synchronized (Selector.this) {
                         System.out.println("Selector.select() -> observer running update");
                         if(Selector.this.chosenOne == null){
                             System.out.println("Selector.select() -> observer changing chosenOne for " + channel.getName());
@@ -39,7 +40,7 @@ public class Selector implements go.Selector {
                     }
                 };
 
-                channel.observe(direction, observer);
+                channel.observe(direction, observer); // Ligne 43
 
                 // Si instant-update
                 if (chosenOne != null){

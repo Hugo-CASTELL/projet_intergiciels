@@ -5,31 +5,28 @@ import go.Observer;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
 
 public class Channel<T> implements go.Channel<T> {
 
-    private final go.cs.ChannelRemote<T> channel;
+    private final go.cs.ChannelRemote<T> channelRemote;
 
     public Channel(String name) {
         try {
             Registry dns = LocateRegistry.getRegistry(ServerImpl.PORT);
 
             // récupération de l'ancien channel
-            ChannelRemote channelBinding = null;
+            ChannelRemote<T> channelBinding = null;
             try {
-                channelBinding = (go.cs.ChannelRemote) dns.lookup(name);
+                channelBinding = (go.cs.ChannelRemote<T>) dns.lookup(name);
             } catch (NotBoundException e) {
-                channelBinding = new ChannelRemoteImpl(name);
+                channelBinding = new ChannelRemoteImpl<T>(new go.shm.Channel<>(name));
                 dns.bind(name, channelBinding);
             }
 
-            this.channel = channelBinding;
+            this.channelRemote = channelBinding;
 
         } catch (RemoteException | AlreadyBoundException e) {
             throw new RuntimeException(e);
@@ -38,7 +35,7 @@ public class Channel<T> implements go.Channel<T> {
 
     public void out(T v) {
         try {
-            this.channel.out(v);
+            this.channelRemote.out(v);
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
@@ -46,7 +43,7 @@ public class Channel<T> implements go.Channel<T> {
 
     public T in() {
         try {
-            return this.channel.in();
+            return this.channelRemote.in();
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
@@ -54,7 +51,7 @@ public class Channel<T> implements go.Channel<T> {
 
     public String getName() {
         try {
-            return this.channel.getName();
+            return this.channelRemote.getName();
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
@@ -62,13 +59,13 @@ public class Channel<T> implements go.Channel<T> {
 
     public void observe(Direction dir, Observer observer) {
         try {
-            this.channel.observe(dir, observer);
+            this.channelRemote.observe(dir, new ObserverRemoteImpl(observer));
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void notify(Direction dir) throws RemoteException {
-        this.channel.notify(dir);
+        this.channelRemote.notify(dir);
     }
 }

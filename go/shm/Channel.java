@@ -117,7 +117,6 @@ public class Channel<T> implements go.Channel<T> {
         System.out.println("Channel " + this.name + " start notify()");
         List<Observer> observers = (dir == Direction.In ? this.inObservers : this.outObservers);
         if (!observers.isEmpty()){
-            //observers.getFirst().update();
             observers.forEach(Observer::update);
             observers.clear();
         }

@@ -1,18 +1,16 @@
 package go.cs;
 
 import go.Direction;
-import go.Observer;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
 
 public class ChannelRemoteImpl<T> extends UnicastRemoteObject implements ChannelRemote<T> {
 
-    private go.shm.Channel<T> channel;
+    private final go.shm.Channel<T> channel;
 
-    public ChannelRemoteImpl(String name) throws RemoteException {
-        this.channel = new go.shm.Channel(name);
+    public ChannelRemoteImpl(go.shm.Channel<T> channel) throws RemoteException {
+        this.channel = channel;
     }
 
     public void out(T v) throws RemoteException {
@@ -27,8 +25,14 @@ public class ChannelRemoteImpl<T> extends UnicastRemoteObject implements Channel
         return this.channel.getName();
     }
 
-    public void observe(Direction dir, Observer observer) throws RemoteException {
-        this.channel.observe(dir, observer);
+    public void observe(Direction dir, ObserverRemote observer) throws RemoteException {
+        this.channel.observe(dir, () -> {
+            try {
+                observer.update();
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public void notify(Direction dir) throws RemoteException {
