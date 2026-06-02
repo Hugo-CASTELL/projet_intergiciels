@@ -24,9 +24,14 @@ public class TestShm25 {
         Selector sIn = factory.newSelector(java.util.Map.of(
                 c1, Direction.In,
                 c2, Direction.In,
-                c3, Direction.In));
+                c3, Direction.In,
+                c4, Direction.In,
+                c5, Direction.In));
 
         Selector sOut = factory.newSelector(java.util.Map.of(
+                c1, Direction.Out,
+                c2, Direction.Out,
+                c3, Direction.Out,
                 c4, Direction.Out,
                 c5, Direction.Out));
 

@@ -27,16 +27,16 @@ public class Factory implements go.Factory {
             try {
                 Host address = (Host) dns.lookup(ChannelMaster.HOSTNAME);
             } catch (NotBoundException e) {
-                // Donne son IP et son Port en s'enregistrant
                 Thread threadMaster = new ChannelMaster();
                 threadMaster.start();
+                try { Thread.sleep(200); } catch (InterruptedException e2) { }
             }
         }
         catch (RemoteException e) {
             throw new RuntimeException(e);
         }
 
-        return new ChannelSlave<>("slave");
+        return new ChannelSlave<>(name);
     }
     
     /** Hors projet */

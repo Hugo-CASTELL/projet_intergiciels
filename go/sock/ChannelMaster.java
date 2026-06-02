@@ -47,32 +47,8 @@ public class ChannelMaster extends Thread{
         try {
             while(true){
                 Socket sock = serverSocket.accept();
-                BufferedReader received = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-                PrintWriter answer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(sock.getOutputStream())), true);
-
-                boolean wasOutBefore = false;
-                boolean endSocket = false;
-                while(endSocket) {
-                    String message = received.readLine();
-                    if(wasOutBefore){
-                        channel.out(message);
-                        endSocket = true;
-                    } else {
-                        if(message.equals("IN")) {
-                            answer.println(channel.in());
-                            endSocket = true;
-                        } else if (message.equals("OUT")) {
-                            wasOutBefore = true;
-                        } else {
-                            break;
-                        }
-                    }
-                }
-
-                answer.println("END_SOCKET");
-                answer.close();
-                received.close();
-                sock.close();
+                System.out.println("ChannelMaster accepted a socket");
+                new Thread(new SocketHandler(sock, channel)).start();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -60,6 +60,27 @@ public class ChannelSlave<T> implements Channel<T> {
 
         fermerConnection();
     }
+
+    @SuppressWarnings("unchecked")
+    private T parseResponse(String response) {
+        if (response == null) {
+            return null;
+        }
+
+        String trim = response.trim();
+
+        try {
+            return (T) Integer.valueOf(trim);
+        } catch (NumberFormatException e) { }
+
+        if (trim.equalsIgnoreCase("true") || trim.equalsIgnoreCase("false")) {
+            return (T) Boolean.valueOf(trim);
+        }
+
+        System.out.println("DEBUG: Server sent as  response: '" + response + "'");
+
+        return (T) trim;
+    }
     
     public T in() {
         this.ouvrirConnection();
@@ -67,13 +88,16 @@ public class ChannelSlave<T> implements Channel<T> {
         this.writer.println("IN");
         String response = null;
         try {
-            response = this.reader.readLine();
+            while(response == null) {
+                response = this.reader.readLine();
+                try { Thread.sleep(10); } catch (InterruptedException e2) { }
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         fermerConnection();
-        return (T) response;
+        return this.parseResponse(response);
     }
 
     @Override
