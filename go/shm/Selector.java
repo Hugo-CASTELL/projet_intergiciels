@@ -25,6 +25,7 @@ public class Selector implements go.Selector {
             chosenOne = null;
 
             System.out.println("Selector.select()");
+
             for (var entry : this.chanelsMap.entrySet()){
                 Channel channel = entry.getKey();
                 Direction direction = entry.getValue();
